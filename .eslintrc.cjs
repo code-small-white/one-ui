@@ -1,4 +1,8 @@
 module.exports = {
+	extends: [ // then, enable whichever type-aware rules you want to use
+		'eslint:recommended',
+		'plugin:@typescript-eslint/recommended',
+	],
 	parser: '@typescript-eslint/parser', // add the TypeScript parser
 	plugins: [
 		'svelte3',
@@ -22,29 +26,30 @@ module.exports = {
 		es2017: true,
 		node: true
 	},
-	setting: {
+	settings: {
 		'svelte3/typescript': true,
 	},
 	rules: {
-		"linebreak-style": [
-			"error",
-			"unix"
+		'linebreak-style': [
+			'error',
+			'unix'
 		],
-		"quotes": [
-			"error",
-			"single"
+		'quotes': [
+			'error',
+			'single'
 		],
-		"semi": [
-			"error",
-			"never"
+		'semi': [
+			'error',
+			'never'
 		],
-		"prefer-const": [
-			"error",
+		'prefer-const': [
+			'error',
 			{
-				"destructuring": "all"
+				'destructuring': 'all'
 			}
 		],
 		// "@typescript-eslint/no-explicit-any": "off",
-		"svelte/valid-compile": "off"
+		'svelte/valid-compile': 'off',
+		"indent": ["error", 2]
 	}
-};
+}

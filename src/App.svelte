@@ -2,13 +2,24 @@
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
-    import Slider from './lib/Slider.svelte'
-    const b=0;
+  import Slider from './lib/Slider.svelte'
+  const b=0
+  import { writable } from 'svelte/store'
+
+  const store = writable([])
+  $store.length 
+
+  $: assignment = []
+  assignment.length // incorrect no-unsafe-member-access error
+  // You can work around this by doing
+  let another_assignment: string[]
+  $: another_assignment = []
+  another_assignment.length // OK
 </script>
 
 <main>
   <div>
-    <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
+   <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
       <img src={viteLogo} class="logo" alt="Vite Logo" />
     </a>
     <a href="https://svelte.dev" target="_blank" rel="noreferrer">
@@ -27,7 +38,7 @@
   </p>
 
   <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
+    Click on the Vite and Svelte logos to learn more{b}
   </p>
 </main>
 
