@@ -1,61 +1,43 @@
-<script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
-  import Slider from './lib/Slider.svelte'
-  const b=0
-  import { writable } from 'svelte/store'
-
-  const store = writable([])
-  $store.length 
-
-  $: assignment = []
-  assignment.length // incorrect no-unsafe-member-access error
-  // You can work around this by doing
-  let another_assignment: string[]
-  $: another_assignment = []
-  another_assignment.length // OK
+<!-- Welcome to eslint-plugin-svelte -->
+<script>
+    let a = 1
+    let b = 2
+    let c = 2
+    const user = {
+        firstname: 'Ada',
+        lastname: 'Lovelace'
+    }
+    let current = 'foo'
+    const color = 'red'
+    const active = true
 </script>
 
-<main>
-  <div>
-   <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Svelte</h1>
+<input
+    type="number"
+    bind:value={a} />
+<input
+    type="number"
+    bind:value={b} />
+<input
+    type="number"
+    bind:value={c} />
+<p>{a} + {b} + {c} = {a + b + c}</p>
 
-  <div class="card">
-    <Counter />
-    <Slider />
-  </div>
+<input bind:value={user.firstname} />
+<input bind:value={user.lastname} />
 
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
+<h1>Hello {user.firstname}!</h1>
 
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more{b}
-  </p>
-</main>
+{#if a}
+    <div>foo</div>
+{:else if b}
+    <div>bar</div>
+{/if}
 
-<style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
-  }
-</style>
+<button
+    type=button
+    class:selected={current === 'foo'} class:active
+    on:click="{() => current = 'foo'}"
+>foo</button>
+
+<div style:color>...</div>
