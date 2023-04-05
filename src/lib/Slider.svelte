@@ -40,8 +40,8 @@
 
 <div class="root">
     <div class="track" bind:this={trackDom} 
-    on:click={onClick} style="--progress:{progress}px" />
-    <div class="btn" bind:this={btnDom} style="transform: translateX({progress}px)" on:touchmove={onTouchmove} />
+        on:click={onClick} style:--progress="{progress}px" />
+    <div class="btn" bind:this={btnDom} style:transform="translateX({progress}px)" on:touchmove={onTouchmove} />
 </div>
 
 <style lang="less">
