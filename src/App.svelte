@@ -1,5 +1,8 @@
 <!-- Welcome to eslint-plugin-svelte -->
-<script>
+<script lang="ts">
+    import Slider from './lib/Slider.svelte'
+
+
     let a = 1
     let b = 2
     let c = 2
@@ -41,3 +44,4 @@
 >foo</button>
 
 <div style:color>...</div>
+<Slider />

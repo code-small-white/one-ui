@@ -29,6 +29,24 @@
         const { clientX } = e.touches[0]
         updateValue(clientX)
     }
+    let canMove = false
+    let xOffset=0
+    const onMousedown = (e:MouseEvent) => {
+        xOffset=e.clientX-(e.target as HTMLDivElement).getBoundingClientRect().left
+        canMove = true
+        document.addEventListener('mouseup', onMouseup)
+        document.addEventListener('mousemove', onMousemove)
+    }
+    const onMousemove = (e: MouseEvent) => {
+        if (!canMove) return
+        updateValue(e.clientX-xOffset)
+    }
+    const onMouseup = () => {
+        canMove = false
+        document.removeEventListener('mouseup', onMouseup)
+        document.removeEventListener('mousemove', onMousemove)
+    }
+
     const updateValue = (offsetX: number) => {
         const { x, width } = xRange
         offsetX = offsetX - x
@@ -41,7 +59,7 @@
 <div class="root">
     <div class="track" bind:this={trackDom} 
         on:click={onClick} style:--progress="{progress}px" />
-    <div class="btn" bind:this={btnDom} style:transform="translateX({progress}px)" on:touchmove={onTouchmove} />
+    <div class="btn" bind:this={btnDom} style:transform="translateX({progress}px)" on:touchmove={onTouchmove} on:mousedown={onMousedown} />
 </div>
 
 <style lang="less">
