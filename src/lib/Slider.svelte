@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from 'svelte'
+    import {onMount} from 'svelte'
 
     export let min = 0
     export let max = 1
@@ -13,8 +13,8 @@
 
     onMount(() => {
         const btnWidth = btnDom.getBoundingClientRect().width
-        const { x, width } = trackDom.getBoundingClientRect()
-        xRange = { x, width: width - btnWidth }
+        const {x, width} = trackDom.getBoundingClientRect()
+        xRange = {x, width: width - btnWidth}
         // 绑定值和 min max做转换
         const valRange = max - min
         rate = valRange / xRange.width
@@ -26,20 +26,20 @@
         updateValue(e.offsetX + xRange.x)
     }
     const onTouchmove = (e: TouchEvent) => {
-        const { clientX } = e.touches[0]
+        const {clientX} = e.touches[0]
         updateValue(clientX)
     }
     let canMove = false
-    let xOffset=0
-    const onMousedown = (e:MouseEvent) => {
-        xOffset=e.clientX-(e.target as HTMLDivElement).getBoundingClientRect().left
+    let xOffset = 0
+    const onMousedown = (e: MouseEvent) => {
+        xOffset = e.clientX - (e.target as HTMLDivElement).getBoundingClientRect().left
         canMove = true
         document.addEventListener('mouseup', onMouseup)
         document.addEventListener('mousemove', onMousemove)
     }
     const onMousemove = (e: MouseEvent) => {
         if (!canMove) return
-        updateValue(e.clientX-xOffset)
+        updateValue(e.clientX - xOffset)
     }
     const onMouseup = () => {
         canMove = false
@@ -48,7 +48,7 @@
     }
 
     const updateValue = (offsetX: number) => {
-        const { x, width } = xRange
+        const {x, width} = xRange
         offsetX = offsetX - x
         const val = offsetX < 0 ? 0 : offsetX > width ? width : offsetX
         progress = val
@@ -57,47 +57,44 @@
 </script>
 
 <div class="root">
-    <div class="track" bind:this={trackDom} 
-        on:click={onClick} style:--progress="{progress}px" />
-    <div class="btn" bind:this={btnDom} style:transform="translateX({progress}px)" on:touchmove={onTouchmove} on:mousedown={onMousedown} />
+    <div class="track" bind:this={trackDom}
+         on:click={onClick} style:--progress="{progress}px"></div>
+    <div class="btn" bind:this={btnDom} style:transform="translateX({progress}px)" on:touchmove={onTouchmove}
+         on:mousedown={onMousedown} style:color="#535bf2"></div>
 </div>
+<style lang="stylus">
+  :root
+    --van-primary-color red
 
-<style lang="less">
-    .root {
-        position: relative;
-        padding: 1.3vw 0;
+  .root
+    position relative
+    padding 1.3vw 0
 
-        .track {
-            height: 1.6vw;
-            background-color: #e3e7ea;
-            border-radius: 0.8vw;
-            position: relative;
-            overflow: hidden;
+    .track
+      height 1.6vw
+      background-color #e3e7ea
+      border-radius 0.8vw
+      position relative
+      overflow hidden
 
-            &::after {
-                position: absolute;
-                content: '';
-                width: 100%;
-                height: 100%;
-                transform-origin: left;
-                top: 0;
-                left: -100%;
-                transform: translateX(var(--progress));
-                background-color: var(--van-primary-color);
-            }
-        }
+      &::after
+        position absolute
+        content ''
+        width 100%
+        height 100%
+        transform-origin left
+        top 0
+        left -100%
+        transform translateX(var(--progress))
+        background-color var(--van-primary-color)
 
-        .btn {
-            width: 4.27vw;
-            height: 4.27vw;
-            border: 0.27vw solid #e3e7ea;
-            border-radius: 50%;
-            background-color: white;
-            position: absolute;
-            top: 0;
-            box-sizing: border-box;
-            // transform: translateX(30%);
-            // transition: transform .2s;
-        }
-    }
+    .btn
+      width 4.27vw
+      height 4.27vw
+      border 0.27vw solid #e3e7ea
+      border-radius 50%
+      background-color white
+      position absolute
+      top 0
+      box-sizing border-box
 </style>

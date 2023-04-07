@@ -46,20 +46,20 @@ module.exports = {
         }],
         'no-multiple-empty-lines': ['error', { 'max': 2 }],
         'svelte/valid-compile': 'off',
-        'indent': ['error', 4],
-        'svelte/indent': [
-            'error',
-            {
-                'indent': 4,
-                'ignoredNodes': [],
-                'switchCase': 1,
-                'alignAttributesVertically': false
-            }
-        ],
+        // 'indent': ['error', 4],
+        // 'svelte/indent': [
+        //     'error',
+        //     {
+        //         'indent': 4,
+        //         'ignoredNodes': [],
+        //         'switchCase': 1,
+        //         'alignAttributesVertically': false
+        //     }
+        // ],
         'svelte/prefer-style-directive':'error',
-        'svelte/html-self-closing':'error',
+        // 'svelte/html-self-closing':'error',
         'svelte/prefer-class-directive':'error',
-        'svelte/html-closing-bracket-spacing':'error',
+        // 'svelte/html-closing-bracket-spacing':'error',
         'svelte/shorthand-directive':'error'
     }
 }
