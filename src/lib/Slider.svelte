@@ -58,9 +58,9 @@
 
 <div class="root">
     <div class="track" bind:this={trackDom}
-         on:click={onClick} style:--progress="{progress}px"></div>
+        on:click={onClick} style:--progress="{progress}px" />
     <div class="btn" bind:this={btnDom} style:transform="translateX({progress}px)" on:touchmove={onTouchmove}
-         on:mousedown={onMousedown} style:color="#535bf2"></div>
+        on:mousedown={onMousedown} style:color="#535bf2" />
 </div>
 <style lang="stylus">
   :root
