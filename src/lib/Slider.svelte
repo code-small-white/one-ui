@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {onMount} from 'svelte'
+    import { onMount } from 'svelte'
 
     export let min = 0
     export let max = 1
@@ -13,8 +13,8 @@
 
     onMount(() => {
         const btnWidth = btnDom.getBoundingClientRect().width
-        const {x, width} = trackDom.getBoundingClientRect()
-        xRange = {x, width: width - btnWidth}
+        const { x, width } = trackDom.getBoundingClientRect()
+        xRange = { x, width: width - btnWidth }
         // 绑定值和 min max做转换
         const valRange = max - min
         rate = valRange / xRange.width
@@ -26,7 +26,7 @@
         updateValue(e.offsetX + xRange.x)
     }
     const onTouchmove = (e: TouchEvent) => {
-        const {clientX} = e.touches[0]
+        const { clientX } = e.touches[0]
         updateValue(clientX)
     }
     let canMove = false
@@ -48,7 +48,7 @@
     }
 
     const updateValue = (offsetX: number) => {
-        const {x, width} = xRange
+        const { x, width } = xRange
         offsetX = offsetX - x
         const val = offsetX < 0 ? 0 : offsetX > width ? width : offsetX
         progress = val
@@ -59,7 +59,7 @@
 <div class="root">
     <div class="track" bind:this={trackDom}
         on:click={onClick} style:--progress="{progress}px" />
-    <div class="btn" bind:this={btnDom} style:transform="translateX({progress}px)" on:touchmove={onTouchmove}
+    <div class="btn" bind:this={btnDom} style:transform="translateX({progress}px)" on:touchmove|passive={onTouchmove}
         on:mousedown={onMousedown} style:color="#535bf2" />
 </div>
 <style lang="stylus">
