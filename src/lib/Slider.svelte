@@ -3,7 +3,10 @@
 
     export let min = 0
     export let max = 1
-    export let modelValue = min
+    export let value = min
+
+    let className=''
+	export { className as class }
 
     let trackDom: HTMLDivElement
     let btnDom: HTMLDivElement
@@ -11,6 +14,10 @@
     let xRange: { x: number; width: number }
     let rate = 1
 
+    $: {
+       xRange&&value && updateValue((value - min) / rate + xRange.x)
+    }
+    // $: console.log({value})
     onMount(() => {
         const btnWidth = btnDom.getBoundingClientRect().width
         const { x, width } = trackDom.getBoundingClientRect()
@@ -19,7 +26,7 @@
         const valRange = max - min
         rate = valRange / xRange.width
 
-        updateValue((modelValue - min) / rate + x)
+        updateValue((value - min) / rate + x)
     })
 
     const onClick = (e: MouseEvent) => {
@@ -52,11 +59,11 @@
         offsetX = offsetX - x
         const val = offsetX < 0 ? 0 : offsetX > width ? width : offsetX
         progress = val
-        modelValue = val * rate + min
+        value = val * rate + min
     }
 </script>
 
-<div class="root">
+<div class="{className}" class:root={1}>
     <div class="track" bind:this={trackDom}
         on:click={onClick} style:--progress="{progress}px" />
     <div class="btn" bind:this={btnDom} style:transform="translateX({progress}px)" on:touchmove|passive={onTouchmove}

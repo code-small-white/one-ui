@@ -1,39 +1,100 @@
 <!-- 
     可以按照比重分配列宽,默认根据title的文字长度分配
+    固定头,横向滚动不会错位
+    滚定列,y轴滚动不会错位
+    x 固定列没有滚到头有影音
+    x 显示滚动条
  -->
  <svelte:window on:resize={initFixedColTable} />
 <div class="table-c">
-    {#each tableShowFlag as isTableShow, tIdx }
-        {#if isTableShow}
-            <div class="table table{tIdx}" bind:this={tableDom[tIdx]}>
-                <div class="row header" style:min-width="{columnsMinWidth}" bind:this={tHeaderDom[tIdx]}>
-                    {#each tableColumns[tIdx] as { title, key } (key)}
-                        <span class="cell" class:hidden={tIdx === 1 && !groupColumnShowFlag[tIdx][key]} style:width={columnsWidth[key]}>{title}</span>
-                    {/each}
-                </div>
-                <div class="tbody" style:min-width="{columnsMinWidth}" bind:this={tBodyDom[tIdx]}>
-                    {#each data as row}
-                        <div class="row">
-                            {#each tableColumns[tIdx] as { key, Com, getProps = () => undefined } (key)}
-                                <span class="cell" class:hidden={tIdx === 1 && !groupColumnShowFlag[tIdx][key]} style:width={columnsWidth[key]}>
-                                    {#if Com}
-                                        <svelte:component this={Com} {...getProps(row[key], row)} />
-                                    {:else}
-                                        {row[key]}
-                                    {/if}
-                                </span>
-                            {/each}
-                        </div>
+    <div class="theader-c">
+        {#if tableShowFlag[0]}
+            <div class="row fixed-part part0" style:min-width="{columnsMinWidth}" bind:this={tHeaderDom[0]}>
+                {#each tableColumns[0] as { title, key } (key)}
+                    <span class="cell"  style:width={columnsWidth[key]}>{title}</span>
+                {/each}
+            </div>
+        {/if}
+            <div class="scroll-x" bind:this={scrollxContainerDom[0]}>
+                <div class="row part1" style:min-width="{columnsMinWidth}"  bind:this={tHeaderDom[1]}>
+                    {#each tableColumns[1] as { title, key } (key)}
+                        <span class="cell" class:hidden={ !groupColumnShowFlag[1][key]} style:width={columnsWidth[key]}>{title}</span>
                     {/each}
                 </div>
             </div>
+        {#if tableShowFlag[1]}
+            <div class="row fixed-part part2" style:min-width="{columnsMinWidth}" bind:this={tHeaderDom[2]}>
+                {#each tableColumns[2] as { title, key } (key)}
+                    <span class="cell" style:width={columnsWidth[key]}>{title}</span>
+                {/each}
+            </div>
         {/if}
-    {/each}
+    </div>
+    <div class="tbody-c scroll-y">
+    {#if tableShowFlag[0]}
+        <div class="tbody fixed-part part0" style:min-width="{columnsMinWidth}" bind:this={tBodyDom[0]}>
+            {#each data as row}
+                <div class="row">
+                    {#each tableColumns[0] as { key, Com, getProps = () => undefined } (key)}
+                        <span class="cell" style:width={columnsWidth[key]}>
+                            {#if Com}
+                                <svelte:component this={Com} {...getProps(row[key], row)} />
+                            {:else}
+                                {row[key]}
+                            {/if}
+                        </span>
+                    {/each}
+                </div>
+            {/each}
+        </div>
+    {/if}
+
+    <div class="scroll-x" bind:this={scrollxContainerDom[1]}>
+        <div class="tbody part1" style:min-width="{columnsMinWidth}">
+            {#each data as row}
+                <div class="row">
+                    {#each tableColumns[1] as { key, Com, getProps = () => undefined } (key)}
+                        <span class="cell" class:hidden={ !groupColumnShowFlag[1][key]} style:width={columnsWidth[key]}>
+                            {#if Com}
+                                <svelte:component this={Com} {...getProps(row[key], row)} />
+                            {:else}
+                                {row[key]}
+                            {/if}
+                        </span>
+                    {/each}
+                </div>
+            {/each}
+        </div>
+    </div>
+
+    {#if tableShowFlag[2]}
+    <div class="tbody fixed-part part2" style:min-width="{columnsMinWidth}" bind:this={tBodyDom[2]}>
+        {#each data as row}
+            <div class="row">
+                {#each tableColumns[2] as { key, Com, getProps = () => undefined } (key)}
+                    <span class="cell" style:width={columnsWidth[key]}>
+                        {#if Com}
+                            <svelte:component this={Com} {...getProps(row[key], row)} />
+                        {:else}
+                            {row[key]}
+                        {/if}
+                    </span>
+                {/each}
+            </div>
+        {/each}
+    </div>
+    {/if}
+    </div>
+
+<!-- {#key maxScrollLeft}
+<Slider class="slider x-slider" max={maxScrollLeft} bind:value={scrollLeft}/>
+{/key} -->
 
 </div>
 
 <script lang="ts">
     import { onMount } from 'svelte'
+    import Slider from './Slider.svelte';
 
     type Column={title:string,
         key:string,
@@ -45,9 +106,15 @@
     export let columns:Column[]
     export let data:Record<string, any>[]
 
-    const tableDom:HTMLDivElement[] = []
+    const scrollxContainerDom:HTMLDivElement[] = []
     const tBodyDom:HTMLDivElement[] = []
     const tHeaderDom:HTMLDivElement[] = []
+
+    let scrollLeft=0
+    let maxScrollLeft=0
+    $: {
+        // tableDom[1]&&tableDom[1].scrollLeft!==scrollLeft&&(tableDom[1].scrollLeft=scrollLeft)
+    }
 
     const getColumnsWidth = (columns:Column[]) => {
         const proportions = columns.map(it => it.width || it.title.length)
@@ -74,31 +141,34 @@
     const initFixedColTable = () => {
         if (tableShowFlag[0]){
             // 把固定在左边的table的滚动条滚动到最右边
-            tableDom[0].scrollLeft = tableDom[0].scrollWidth - tableDom[0].clientWidth
             const { x: startX } = tHeaderDom[1].getBoundingClientRect()
             const { x } = tHeaderDom[1].children[columnGroups[0].length].getBoundingClientRect()
-            tableDom[0].style.transform = `translateX(${x - startX}px)`
+            tBodyDom[0].style.left = `${x - startX}px`
+            tHeaderDom[0].style.left = `${x - startX}px`
         }
         if (tableShowFlag[2]){
-            const { x:startX } = tableDom[2].getBoundingClientRect()
+            const { x:startX } = tBodyDom[2].getBoundingClientRect()
 
             const { x:endX } = tHeaderDom[2].children[columnGroups[2].length].getBoundingClientRect()
             const translateX = endX - startX 
-            tableDom[2].style.transform = `translateX(${-translateX}px)`
+            tBodyDom[2].style.right = `${translateX}px`
+            tHeaderDom[2].style.right = `${translateX}px`
         }
     }
 
     onMount(() => {
         initFixedColTable()
         // 把x轴滚动同步到title
-        // 把y轴滚动图同步到固定列
-        const _tBodyDom = tBodyDom.filter((_, idx) => tableShowFlag[idx])
-        if (_tBodyDom.length){
-            const onScroll = (e:Event) => {
-                const { scrollTop } = e.target as HTMLDivElement
-                _tBodyDom.forEach(dom => dom.scrollTop = scrollTop)
-            }
-            _tBodyDom.forEach(ele => ele.addEventListener('scroll', onScroll, { passive:true }))
+        if(scrollxContainerDom[0]&&scrollxContainerDom[1]){
+            const {clientWidth,scrollWidth}=scrollxContainerDom[1]
+            maxScrollLeft=scrollWidth - clientWidth
+          
+            scrollxContainerDom.forEach(dom=>{
+                dom.addEventListener('scroll',(e)=>{
+                    const {scrollLeft}=e.target as HTMLDivElement
+                    scrollxContainerDom[0].scrollLeft=scrollxContainerDom[1].scrollLeft=scrollLeft
+                })
+            })
         }
     })
 </script>
@@ -108,50 +178,53 @@
     position relative
     height 300px
     overflow hidden
-    // overflow auto
-    // padding-left {paddingLeft}
-.table
+    :global(.slider)
+        z-index 3
+        padding 0
+        position absolute
+        bottom 0
+        width 100%
+        :global(.btn)
+            width 69.75446428571429%
+            border-radius 4px
+            height 6px
+            background-color rgba(0, 0, 0, 0.25)
+            border none
+        :global(.track)
+            opacity 0
+            height 6px
+    // .table
     white-space nowrap
-    position absolute
-    top 0
-    left 0
-    width 100%
-    height 100%
-
+    user-select none
     display flex
     flex-direction column
     overflow hidden
-.scroll-view
-    position absolute
-    bottom 0
-    width 100%
-    overflow-y auto 
-    z-index 3
     
-.table0
-    left -100%
-.table1
-    overflow-x auto
-.table2
-    left 100%
+.part0
+    transform translateX(-100%)
+.part2
+    transform translateX(100%)
+
     
-.table0
-.table2
+.fixed-part
     background-color white
     z-index 1
-    .header
-    .tbody
-        &::-webkit-scrollbar
-            width 0
-            height 0
-.header
-    overflow auto
+    position absolute
+    top 0
+    width 100%
+    color red
+.scroll-x
+    width 100%
+    position relative
+    overflow-x auto
     &::-webkit-scrollbar
         width 0
         height 0
-.tbody
-    flex 1
-    overflow-y auto
+.theader-c
+    position relative
+.tbody-c
+    overflow hidden auto
+    position relative
 
 .row
     border-bottom 1px solid rgb(224, 224, 230)
@@ -161,7 +234,5 @@
     padding 12px 
     box-sizing border-box
     overflow hidden
-.hidden
-    // visibility hidden
-    // opacity 0
+
 </style>
